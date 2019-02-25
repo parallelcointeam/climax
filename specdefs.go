@@ -25,7 +25,7 @@ type Int *int
 
 // KV is a named container that can contain other data types and including pointers to other KV's, allowing the creation of sparse trees.
 /*
-	Arrays of this type are used to declare collections of key/values which can store other KV's under a tag, or lists of strings for collections of possible values.
+	Arrays of this type are used to declare collections of key/values which can store other KV's under a tag, or lists of strings for collections of string values such as examples
 
 	The reason for using arrays is that the invocations of oneshot flags (non-variables in climax's base structure) are order-sensitive since they can terminate execution or optionally be triggered at shutdown and other ways of encoding ordering are cumbersome to declare.
 */
@@ -36,6 +36,12 @@ type KV struct {
 
 // List is a simple list of strings, specifically used to handle example invocation lists, and arrays of List can be used for Topics since they have only 3 fields, they can be interpreted to be in this fixed order without requiring tags to denote the field's type.
 type List []string
+
+// PathVariant is a go-equivalent of the 'variant' type that contains one of multiple other types inside it
+type PathVariant struct {
+	KV   *KV
+	Tags *Tags
+}
 
 // String is an alias used to filter for string representation of a
 type String *string

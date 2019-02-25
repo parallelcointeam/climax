@@ -1,6 +1,7 @@
 package climax
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -29,7 +30,7 @@ var exampleApp = &KV{
 							Tags{
 								{"rpcserver",
 									Tags{
-										{"short", ""},
+										{"short", "set the full node RPC address to connect to"},
 										{"brief", ""},
 										{"usage", ""},
 										{"help", ""},
@@ -90,7 +91,11 @@ var exampleApp = &KV{
 }
 
 func TestGetPath(t *testing.T) {
-	exampleApp.Get("name")
+	path := "commands ctl vars rpcserver brief"
+	// pathSplit := strings.Split(path, " ")
+	// lastTag := pathSplit[len(pathSplit)-1]
+	tags := exampleApp.GetTags(path)
+	fmt.Println("\nFound Tags @", path, ":", tags)
 }
 
 /*
