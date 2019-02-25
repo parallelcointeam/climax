@@ -22,7 +22,7 @@ func (
 /*
 	The primary label of the root KV does not need to be specified in the path, and the root item is meant to be a single KV pair.
 
-	Note that this structure does not have reverse linking as it is declared depth-first and whichever Tags you start from has no back reference (in theory this could be added in a pre-processing pass if it was needed)
+	Note that this structure does not have reverse linking as it is declared depth-first and whichever Tags you start from has no back reference - unless you have called the InitApp method on the root, which will fill in the back references.
 */
 func (
 	s *KV,
@@ -33,9 +33,9 @@ func (
 ) {
 
 	var ok bool
+	// Root element is a name and a Tags array. If it isn't, an empty PathVariant will be returned
 	*out.Tags, ok = s.Data.(Tags)
 	pathParts := strings.Split(path, " ")
-	// Root element is a name and a Tags array
 	if ok {
 		for _, x := range pathParts {
 			for _, y := range *out.Tags {

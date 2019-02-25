@@ -94,7 +94,7 @@ func TestGetPath(t *testing.T) {
 	path := "commands ctl vars rpcserver brief"
 	// pathSplit := strings.Split(path, " ")
 	// lastTag := pathSplit[len(pathSplit)-1]
-	tags := exampleApp.GetTags(path)
+	tags := exampleApp.Get(path)
 	fmt.Println("\nFound Tags @", path, ":", tags)
 }
 
