@@ -8,13 +8,16 @@ import (
 
 var output bytes.Buffer
 
+func TestNew(t *testing.T) {
+	a := New("smth")
+	if a.Name != "smth" {
+		t.Errorf("actual app name (%s) doesn't match passed (smth)", a.Name)
+	}
+}
+
 func init() {
 	outputDevice = &output
 	errorDevice = &output
-}
-
-func setArguments(args ...string) {
-	os.Args = append([]string{"test"}, args...)
 }
 
 func mustPanic(t *testing.T, text string, fn func()) {
@@ -28,9 +31,6 @@ func mustPanic(t *testing.T, text string, fn func()) {
 	fn()
 }
 
-func TestNew(t *testing.T) {
-	a := New("smth")
-	if a.Name != "smth" {
-		t.Errorf("actual app name (%s) doesn't match passed (smth)", a.Name)
-	}
+func setArguments(args ...string) {
+	os.Args = append([]string{"test"}, args...)
 }

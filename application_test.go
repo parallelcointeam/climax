@@ -5,35 +5,6 @@ import (
 	"testing"
 )
 
-func TestRun_Bare(t *testing.T) {
-	mustPanic(t, "no shell args", func() {
-		os.Args = []string{}
-		defer setArguments()
-
-		a := Application{}
-		a.Run()
-	})
-}
-
-func TestRun_Version(t *testing.T) {
-	a := New("application")
-	a.Version = "5.0"
-	setArguments("version")
-	defer setArguments()
-	defer output.Reset()
-
-	if exitcode := a.Run(); exitcode != 0 {
-		t.Errorf("finished with code %d, expected 0", exitcode)
-	}
-
-	expected := "application version 5.0\n"
-	if output.String() != expected {
-		t.Errorf("actual output is different to expected:\n")
-		t.Logf("- expected: %q", expected)
-		t.Logf("- recieved: %q", output.String())
-	}
-}
-
 const expectedAppHelp string = `application is a thing
 
 Usage:
@@ -76,6 +47,48 @@ Examples:
 		Start a server on http port 4747.
 
 `
+
+func TestAddCommand(t *testing.T) {
+	a := Application{}
+	a.AddCommand(Command{})
+	if len(a.Commands) != 1 {
+		t.Error("broken")
+	}
+}
+
+func TestAddExample(t *testing.T) {
+	var c Command
+	c.AddExample(Example{})
+	if len(c.Examples) == 0 {
+		t.Error("failed to add example")
+	}
+}
+
+func TestAddFlag(t *testing.T) {
+	var c Command
+	c.AddFlag(Flag{})
+	if len(c.Flags) != 1 {
+		t.Error("broken")
+	}
+}
+
+func TestAddTopic(t *testing.T) {
+	a := Application{}
+	a.AddTopic(Topic{})
+	if len(a.Topics) != 1 {
+		t.Error("broken")
+	}
+}
+
+func TestRun_Bare(t *testing.T) {
+	mustPanic(t, "no shell args", func() {
+		os.Args = []string{}
+		defer setArguments()
+
+		a := Application{}
+		a.Run()
+	})
+}
 
 func TestRun_Help(t *testing.T) {
 	a := New("application")
@@ -138,34 +151,21 @@ func TestRun_Help(t *testing.T) {
 	output.Reset()
 }
 
-func TestAddCommand(t *testing.T) {
-	a := Application{}
-	a.AddCommand(Command{})
-	if len(a.Commands) != 1 {
-		t.Error("broken")
-	}
-}
+func TestRun_Version(t *testing.T) {
+	a := New("application")
+	a.Version = "5.0"
+	setArguments("version")
+	defer setArguments()
+	defer output.Reset()
 
-func TestAddTopic(t *testing.T) {
-	a := Application{}
-	a.AddTopic(Topic{})
-	if len(a.Topics) != 1 {
-		t.Error("broken")
+	if exitcode := a.Run(); exitcode != 0 {
+		t.Errorf("finished with code %d, expected 0", exitcode)
 	}
-}
 
-func TestAddFlag(t *testing.T) {
-	var c Command
-	c.AddFlag(Flag{})
-	if len(c.Flags) != 1 {
-		t.Error("broken")
-	}
-}
-
-func TestAddExample(t *testing.T) {
-	var c Command
-	c.AddExample(Example{})
-	if len(c.Examples) == 0 {
-		t.Error("failed to add example")
+	expected := "application version 5.0\n"
+	if output.String() != expected {
+		t.Errorf("actual output is different to expected:\n")
+		t.Logf("- expected: %q", expected)
+		t.Logf("- recieved: %q", output.String())
 	}
 }

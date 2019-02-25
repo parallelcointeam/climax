@@ -6,11 +6,6 @@ import (
 	"os"
 )
 
-var (
-	outputDevice io.Writer = os.Stdout
-	errorDevice  io.Writer = os.Stderr
-)
-
 // Application is a main CLI instance.
 //
 // By default, Climax provides its own implementation of version
@@ -41,70 +36,21 @@ type Group struct {
 	Commands []*Command
 }
 
-func (a *Application) println(stuff ...interface{}) {
-	fmt.Fprintln(outputDevice, stuff...)
-}
+var errorDevice io.Writer = os.Stderr
 
-func (a *Application) printf(format string, stuff ...interface{}) {
-	fmt.Fprintf(outputDevice, format, stuff...)
-}
-
-func (a *Application) printerr(err ...interface{}) {
-	for _, each := range err {
-		fmt.Fprintln(errorDevice, a.Name+":", each)
-	}
-}
-
-func (a *Application) commandByName(name string) *Command {
-	for i, command := range a.Commands {
-		if command.Name == name {
-			return &a.Commands[i]
-		}
-	}
-
-	return nil
-}
-
-func (a *Application) topicByName(name string) *Topic {
-	for i, topic := range a.Topics {
-		if topic.Name == name {
-			return &a.Topics[i]
-		}
-	}
-
-	return nil
-}
-
-func (a *Application) groupByName(name string) *Group {
-	for i, group := range a.Groups {
-		if group.Name == name {
-			return &a.Groups[i]
-		}
-	}
-
-	return nil
-}
-
-func (a *Application) isNameAvailable(name string) bool {
-	hypo, jypo := a.commandByName(name), a.topicByName(name)
-	if hypo != nil || jypo != nil {
-		return false
-	}
-
-	return true
-}
-
-// AddGroup adds a new empty, named group.
-//
-// Pass the returned group name to Command's Group member
-// to make the command part of the group.
-func (a *Application) AddGroup(name string) string {
-	a.Groups = append(a.Groups, Group{Name: name})
-	return name
-}
+var outputDevice io.Writer = os.Stdout
 
 // AddCommand does literally what its name says.
-func (a *Application) AddCommand(command Command) {
+func (
+	a *Application,
+) AddCommand(
+	command Command,
+) {
+
+	if !a.isNameAvailable(command.Name) {
+		panic("names of commands must be unique")
+	}
+
 	a.Commands = append(a.Commands, command)
 
 	newCmd := &a.Commands[len(a.Commands)-1]
@@ -120,15 +66,40 @@ func (a *Application) AddCommand(command Command) {
 	}
 }
 
+// AddGroup adds a new empty, named group.
+//
+// Pass the returned group name to Command's Group member
+// to make the command part of the group.
+func (
+	a *Application,
+) AddGroup(
+	name string) string {
+	a.Groups = append(a.Groups, Group{Name: name})
+	return name
+}
+
 // AddTopic does literally what its name says.
-func (a *Application) AddTopic(topic Topic) {
+func (
+	a *Application,
+) AddTopic(
+	topic Topic) {
 	a.Topics = append(a.Topics, topic)
+}
+
+// Log prints the message to stderrr (each argument takes a distinct line).
+func (
+	a *Application,
+) Log(
+	lines ...interface{}) {
+	a.printerr(lines...)
 }
 
 // Run executes a CLI.
 //
 // Take a note, Run panics if len(os.Args) < 1
-func (a *Application) Run() int {
+func (
+	a *Application,
+) Run() int {
 	if len(os.Args) < 1 {
 		panic("shell-provided arguments are not present")
 	}
@@ -197,7 +168,85 @@ func (a *Application) Run() int {
 	return 1
 }
 
-// Log prints the message to stderrr (each argument takes a distinct line).
-func (a *Application) Log(lines ...interface{}) {
-	a.printerr(lines...)
+func (
+	a *Application,
+) commandByName(
+	name string,
+) *Command {
+
+	for i, command := range a.Commands {
+
+		if command.Name == name {
+
+			return &a.Commands[i]
+		}
+	}
+
+	return nil
+}
+
+func (
+	a *Application,
+) groupByName(
+	name string,
+) *Group {
+
+	for i, group := range a.Groups {
+
+		if group.Name == name {
+			return &a.Groups[i]
+		}
+	}
+
+	return nil
+}
+
+func (
+	a *Application,
+) isNameAvailable(
+	name string,
+) bool {
+
+	hypo, jypo := a.commandByName(name), a.topicByName(name)
+	if hypo != nil || jypo != nil {
+		return false
+	}
+
+	return true
+}
+
+func (
+	a *Application,
+) printerr(
+	err ...interface{}) {
+	for _, each := range err {
+		fmt.Fprintln(errorDevice, a.Name+":", each)
+	}
+}
+
+func (
+	a *Application,
+) printf(
+	format string, stuff ...interface{}) {
+	fmt.Fprintf(outputDevice, format, stuff...)
+}
+
+func (
+	a *Application,
+) println(
+	stuff ...interface{}) {
+	fmt.Fprintln(outputDevice, stuff...)
+}
+
+func (
+	a *Application,
+) topicByName(
+	name string) *Topic {
+	for i, topic := range a.Topics {
+		if topic.Name == name {
+			return &a.Topics[i]
+		}
+	}
+
+	return nil
 }

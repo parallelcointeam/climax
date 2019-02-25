@@ -53,45 +53,16 @@ type Command struct {
 	Examples []Example
 }
 
-// AddFlag does literally what its name says.
-func (c *Command) AddFlag(newFlag Flag) {
-	c.Flags = append(c.Flags, newFlag)
-}
-
-// AddExample does exactly what its name says.
-func (c *Command) AddExample(newExample Example) {
-	c.Examples = append(c.Examples, newExample)
-}
-
-// Run executes a command handler and returns corresponding exitcode.
-func (c Command) Run(context Context) int {
-	return c.Handle(context)
-}
-
-// Topic is some sort of a concise wiki page.
-type Topic struct {
-	// Name is a [A-Za-z_0-9] identifier of up to 11 characters.
+// Example is an annotated use case of the command.
+type Example struct {
+	// Usecase is a typical use of command.
 	//
-	// Keep topic names short, reasonable, catchy and
-	// easy to type. At best, keep it a single word.
-	//
-	// Examples: buildmode, packages, filetype
-	Name string
+	// Make sure to omit application and command name here,
+	// since Climax appends it by default.
+	Usecase string
 
-	// Brief is a short annotation of the topic.
-	//
-	// Climax doesn't provide any limitations on the brief string
-	// format, however it's highly recommended to keep it a single
-	// lowercase phrase of 3-5 words without any punctuation marks.
-	//
-	// Example: description of package lists
-	Brief string
-
-	// Text is the actual topic content.
-	//
-	// Try to stick to the 80 character limit, so it looks fine
-	// in the split terminal window.
-	Text string
+	// Be descriptive, but keep it under 3-5 sentences.
+	Description string
 }
 
 // Flag is an optional command-line option.
@@ -126,14 +97,52 @@ type Flag struct {
 	Variable bool
 }
 
-// Example is an annotated use case of the command.
-type Example struct {
-	// Usecase is a typical use of command.
+// Topic is some sort of a concise wiki page.
+type Topic struct {
+	// Name is a [A-Za-z_0-9] identifier of up to 11 characters.
 	//
-	// Make sure to omit application and command name here,
-	// since Climax appends it by default.
-	Usecase string
+	// Keep topic names short, reasonable, catchy and
+	// easy to type. At best, keep it a single word.
+	//
+	// Examples: buildmode, packages, filetype
+	Name string
 
-	// Be descriptive, but keep it under 3-5 sentences.
-	Description string
+	// Brief is a short annotation of the topic.
+	//
+	// Climax doesn't provide any limitations on the brief string
+	// format, however it's highly recommended to keep it a single
+	// lowercase phrase of 3-5 words without any punctuation marks.
+	//
+	// Example: description of package lists
+	Brief string
+
+	// Text is the actual topic content.
+	//
+	// Try to stick to the 80 character limit, so it looks fine
+	// in the split terminal window.
+	Text string
+}
+
+// AddExample does exactly what its name says.
+func (
+	c *Command,
+) AddExample(
+	newExample Example) {
+	c.Examples = append(c.Examples, newExample)
+}
+
+// AddFlag does literally what its name says.
+func (
+	c *Command,
+) AddFlag(
+	newFlag Flag) {
+	c.Flags = append(c.Flags, newFlag)
+}
+
+// Run executes a command handler and returns corresponding exitcode.
+func (
+	c *Command,
+) Run(
+	context Context) int {
+	return c.Handle(context)
 }
